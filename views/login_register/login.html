@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng nhập | Xeolone</title>
+  <link rel="stylesheet" href="/static/css/login/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="brand-logo">
+        <img src="/static/img/logo.svg" alt="Xeolone Logo">
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="nhập@email.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="••••••••" required>
+            <button type="button" class="toggle-password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-btn">
+          <span class="btn-text">Đăng nhập</span>
+          <i class="fas fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <p class="text-center">Chưa có tài khoản? <a href="/register" class="auth-link">Tạo tài khoản mới</a></p>
+        <div class="social-login">
+          <p>Hoặc tiếp tục với</p>
+          <div class="social-icons">
+            <a href="#" class="social-icon google">
+              <i class="fab fa-google"></i>
+            </a>
+            <a href="#" class="social-icon facebook">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Notification -->
+    <div id="message" class="notification"></div>
+  </div>
+
+  <script src="/static/js/login/script.js"></script>
+</body>
+</html>
+

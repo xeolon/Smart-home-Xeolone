@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng ký | Xeolone</title>
+  <link rel="stylesheet" href="/static/css/register/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Google Font: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="brand-logo">
+        <img src="/static/img/logo.svg" alt="Xeolone Logo">
+      </div>
+      <h2 class="auth-title">Đăng ký</h2>
+      <form id="register-form" class="auth-form">
+        <div class="form-group">
+          <label for="username">Tên người dùng</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="Tên người dùng" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="nhập@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <div class="input-with-icon">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="••••••••" required>
+            <button type="button" class="toggle-password">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+        <button type="button" class="auth-btn" onclick="sendVerification()">
+          <span class="btn-text">Nhận mã xác minh</span>
+          <i class="fas fa-envelope-open"></i>
+        </button>
+      </form>
+
+      <div id="verification-section" class="verification-section" style="display: none;">
+        <div class="form-group">
+          <label for="verification-code">Mã xác minh</label>
+          <input type="text" id="verification-code" placeholder="Nhập mã xác minh" required>
+        </div>
+        <button type="button" class="auth-btn" onclick="verifyCode()">
+          <span class="btn-text">Xác nhận</span>
+          <i class="fas fa-check"></i>
+        </button>
+      </div>
+      <div id="message" class="notification"></div>
+      <div class="auth-footer">
+        <p>Đã có tài khoản? <a href="/login" class="auth-link">Đăng nhập</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/register/script.js"></script>
+</body>
+</html>
+

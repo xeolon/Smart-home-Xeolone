@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chỉnh sửa hồ sơ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Chỉnh sửa hồ sơ</h2>
+        <form id="edit-profile-form" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="username" class="form-label">Tên người dùng</label>
+                <input type="text" class="form-control" id="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="bio" class="form-label">Giới thiệu</label>
+                <textarea class="form-control" id="bio" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="avatar" class="form-label">Avatar</label>
+                <input type="file" class="form-control" id="avatar">
+            </div>
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </form>
+    </div>
+    <script>
+        // Lấy thông tin người dùng từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('pid');
+
+        // Gọi API để lấy thông tin người dùng
+        fetch(`/api/profile?pid=${pid}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('username').value = data.username;
+                document.getElementById('bio').value = data.bio;
+            })
+            .catch(error => console.error('Lỗi:', error));
+
+        // Xử lý form chỉnh sửa
+        document.getElementById('edit-profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const bio = document.getElementById('bio').value;
+            const avatarFile = document.getElementById('avatar').files[0];
+
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('bio', bio);
+            if (avatarFile) formData.append('avatar', avatarFile);
+
+            const response = await fetch(`/api/profile?pid=${pid}`, {
+                method: 'PUT',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Cập nhật thành công!');
+                window.location.href = `/profile?pid=${pid}`;
+            } else {
+                alert('Có lỗi xảy ra khi cập nhật hồ sơ.');
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

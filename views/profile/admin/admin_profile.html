@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang cá nhân</title>
+    <link href="/static/css/profile/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/profile/style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- Phần thông tin cá nhân -->
+                <div class="card">
+                    <img id="avatar" src="/static/default-avatar.png" class="card-img-top" alt="Avatar">
+                    <div class="card-body">
+                        <h5 id="username" class="card-title">Tên người dùng</h5>
+                        <p id="bio" class="card-text">Chưa có mô tả</p>
+                        <button class="btn btn-primary" onclick="editProfile()">Chỉnh sửa hồ sơ</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <!-- Phần bài viết hoặc hoạt động -->
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Hoạt động gần đây</h5>
+                        <p>Chưa có hoạt động nào.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Lấy thông tin người dùng từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('pid');
+
+        // Gọi API để lấy thông tin người dùng
+        fetch(`/api/profile?pid=${pid}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('username').textContent = data.username;
+                document.getElementById('bio').textContent = data.bio;
+                document.getElementById('avatar').src = data.avatar || '/static/default-avatar.png';
+            })
+            .catch(error => console.error('Lỗi:', error));
+
+        function editProfile() {
+            // Chuyển hướng đến trang chỉnh sửa hồ sơ
+            window.location.href = `/edit-profile?pid=${pid}`;
+        }
+    </script>
+    <script src="/static/js/profile/bootstrap.bundle.min.js"></script>
+</body>
+</html>

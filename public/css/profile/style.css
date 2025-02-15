@@ -1,0 +1,152 @@
+/* Reset và thiết lập cơ bản */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  min-height: 100vh;
+}
+
+/* Giống cấu trúc trang chủ */
+.main-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Container chính */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+/* Card chung (profile, posts, …) */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+/* Profile Card */
+.profile-card img {
+  width: 100%;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  object-fit: cover;
+}
+
+/* Posts card không cần thay đổi thêm */
+.posts-card { }
+
+/* Ảnh dạng vòng cho avatar */
+.rounded-circle {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Nút button */
+.btn {
+  margin-right: 10px;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* Phần bình luận */
+.comments-container {
+  background: #f1f3f5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.comment-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-username {
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 0.9rem;
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 4px;
+  white-space: pre-wrap;      /* Giữ dòng mới và xuống dòng tự động */
+  word-wrap: break-word;      /* Cho phép xuống dòng khi từ quá dài */
+  overflow-wrap: break-word;  /* Tương tự như trên */
+  hyphens: auto;              /* Tự động thêm dấu gạch nối khi chia từ */
+  word-break: break-all;
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* Input bình luận */
+.comment-input {
+  border-radius: 20px !important;
+  padding: 8px 15px !important;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+  .row {
+    flex-direction: column;
+  }
+  .col-md-4,
+  .col-md-8 {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+

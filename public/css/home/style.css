@@ -1,0 +1,169 @@
+/* Reset margin, padding và thiết lập box-sizing */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Sử dụng Google Font và background gradient */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  width: 100%;
+  height: 100%;
+}
+
+/* Main container full chiều cao */
+.main-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header & Navbar */
+.header {
+  background: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 10px 0;
+}
+
+.navbar-brand span {
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.navbar-nav .nav-link {
+  font-size: 1rem;
+  margin-right: 15px;
+  transition: color 0.3s;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #0056b3;
+}
+
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-danger {
+  border-radius: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Content container: cố định chiều cao và bật cuộn dọc */
+.content-container {
+  height: calc(100vh - 70px); /* Điều chỉnh nếu chiều cao header thay đổi */
+  overflow-y: auto;
+  padding: 20px 0;
+}
+
+/* Style cho Card (đăng bài và bài viết) */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.post-creation-card {
+  background: #ffffff;
+}
+
+/* Nếu có tiêu đề trong card */
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Nội dung bài viết */
+.card-text {
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Ảnh bài viết */
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Transition cho các nút */
+.btn {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* Phần bình luận */
+.comments-container {
+  background: #f1f3f5;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  padding: 8px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.comment-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-username {
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 0.9rem;
+}
+
+.comment-text {
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 4px;
+  white-space: pre-wrap;      /* Giữ dòng mới và xuống dòng tự động */
+  word-wrap: break-word;      /* Cho phép xuống dòng khi từ quá dài */
+  overflow-wrap: break-word;  /* Tương tự như trên */
+  hyphens: auto;              /* Tự động thêm dấu gạch nối khi chia từ */
+  word-break: break-all;    
+}
+
+.comment-time {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* Input bình luận */
+.comment-input {
+  border-radius: 20px !important;
+  padding: 8px 15px !important;
+  font-size: 0.9rem;
+}
+

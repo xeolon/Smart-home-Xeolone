@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang cá nhân</title>
+  <!-- Bootstrap CSS (sử dụng file cục bộ hoặc CDN) -->
+  <link href="/static/css/profile/bootstrap.min.css" rel="stylesheet">         
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <!-- Custom CSS cho trang Profile (đã được tùy chỉnh giống trang chủ) -->
+  <link rel="stylesheet" href="/static/css/profile/style.css">                 
+</head>
+<body>
+  <!-- Header với menu giống trang chủ -->
+  <header class="header sticky-top">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">      
+      <div class="container">
+        <!-- Logo và tên website -->
+        <a class="navbar-brand d-flex align-items-center" href="/">
+          <img src="/static/img/logo.svg" alt="Logo" width="40" height="40" class="me-2">
+          <span class="fw-bold">Xeolone</span>
+        </a>
+        <!-- Nút Toggle hiển thị khi màn hình nhỏ -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Nội dung menu -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" href="/">Trang chủ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="javascript:goToProfile()">Trang cá nhân</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/messages">Tin nhắn</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/notifications">Thông báo</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="settingsDropdown" role="button"
+                 data-bs-toggle="dropdown" aria-expanded="false">
+                Cài đặt
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
+                <li><a class="dropdown-item" href="/settings/account">Tài khoản</a></li>
+                <li><a class="dropdown-item" href="/settings/privacy">Quyền riêng tư</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="/help">Trợ giúp</a></li>
+              </ul>
+            </li>
+          </ul>
+          <div class="d-flex">
+            <button onclick="logout()" class="btn btn-outline-danger">Đăng xuất</button>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Main container (giống trang chủ) -->
+  <div class="main-container">
+    <div class="container mt-5">
+      <div class="row">
+        <!-- Cột thông tin cá nhân -->
+        <div class="col-md-4">
+          <div class="card profile-card">
+            <img id="avatar" src="/static/images/default-avatar.png" class="card-img-top" alt="Avatar">
+            <div class="card-body">
+              <h5 id="username" class="card-title"></h5>
+              <p id="bio" class="card-text"></p>
+              <!-- Nút chỉnh sửa hồ sơ (hiển thị nếu có quyền) -->
+              <div id="edit-button-container"></div>
+            </div>
+          </div>
+        </div>
+        <!-- Cột bài viết -->
+        <div class="col-md-8">
+          <div class="card posts-card">
+            <div class="card-body">
+              <h5 class="card-title">Bài viết</h5>
+              <div id="user-posts-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal hiển thị toàn bộ bình luận (giống trang chủ) -->
+  <div class="modal fade" id="commentsModal" tabindex="-1" aria-labelledby="commentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="commentsModalLabel">Bình luận</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+        </div>
+        <div class="modal-body" id="commentsModalBody">
+          <!-- Nội dung bình luận sẽ được tải ở đây -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    let currentUserPid = null; // Lưu PID người dùng hiện tại
+
+    // Lấy thông tin người dùng hiện tại
+    fetch("/api/auth/me")
+      .then(response => {
+        if (response.ok) return response.json();
+        throw new Error("Chưa đăng nhập");
+      })
+      .then(user => { currentUserPid = user.pid; })
+      .catch(error => { console.error("Lỗi lấy thông tin người dùng:", error); });
+
+    // Lấy PID của profile cần hiển thị từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const profilePid = urlParams.get('pid');
+
+    // Lấy thông tin profile
+    fetch(`/api/profile?pid=${profilePid}`)
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('username').textContent = data.username;
+        document.getElementById('bio').textContent = data.bio;
+        document.getElementById('avatar').src = data.avatar || '/static/default-avatar.png';
+      })
+      .catch(error => console.error('Lỗi:', error));
+
+    // Hàm tải bài viết của người dùng
+    async function loadUserPosts() {
+      try {
+        const response = await fetch(`/api/auth/posts/user/${profilePid}`);
+        const posts = await response.json();
+        const container = document.getElementById('user-posts-container');
+
+        if (posts.length === 0) {
+          container.innerHTML = "<p>Chưa có bài viết nào.</p>";
+          return;
+        }
+
+        container.innerHTML = posts.map(post => `
+          <div class="card mb-3 post-card">
+            <div class="card-body">
+              <div class="d-flex align-items-center mb-3">
+                <img src="${post.avatar || '/static/default-avatar.png'}"
+                     class="rounded-circle me-2"
+                     width="50"
+                     height="50"
+                     alt="Avatar">
+                <h5 class="card-title mb-0">${post.username}</h5>
+                <div class="dropdown ms-auto">
+                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                          id="dropdownMenuButton-${post.pid}" data-bs-toggle="dropdown"
+                          aria-expanded="false">
+                    ...
+                  </button>
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton-${post.pid}">
+                    ${ currentUserPid === post.user_pid ?
+                      `<li><a class="dropdown-item" href="#" onclick="editPost('${post.pid}')">Chỉnh sửa</a></li>
+                       <li><a class="dropdown-item" href="#" onclick="deletePost('${post.pid}')">Xoá</a></li>
+                       <li><a class="dropdown-item" href="#" onclick="sharePost('${post.pid}')">Chia sẻ</a></li>`
+                      :
+                      `<li><a class="dropdown-item" href="#" onclick="sharePost('${post.pid}')">Chia sẻ</a></li>`
+                    }
+                  </ul>
+                </div>
+              </div>
+              <p class="card-text">${post.content}</p>
+              ${post.image ? `<img src="${post.image}" class="img-fluid mb-3" alt="Post Image">` : ''}
+              <button onclick="likePost('${post.pid}')" class="btn btn-danger btn-sm">
+                ❤️ ${post.likes}
+              </button>
+              <div class="card-footer bg-transparent">
+                <div class="input-group mt-3">
+                  <input type="text" class="form-control comment-input" placeholder="Viết bình luận..." data-post-pid="${post.pid}">
+                  <button class="btn btn-outline-primary" onclick="postComment('${post.pid}')">Gửi</button>
+                </div>
+                <div id="comments-${post.pid}" class="comments-container mt-2"></div>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        posts.forEach(post => { loadComments(post.pid); });
+      } catch (error) {
+        console.error("Lỗi khi tải bài viết:", error);
+        container.innerHTML = "<p>Lỗi khi tải bài viết!</p>";
+      }
+    }
+
+    // Hàm tải bình luận cho bài viết (tương tự trang chủ)
+    async function loadComments(postPid, limit = 2) {
+      try {
+        const response = await fetch(`/api/auth/comments/${postPid}`);
+        const comments = await response.json();
+        const container = document.getElementById(`comments-${postPid}`);
+
+        let commentsToShow = comments;
+        let showButton = false;
+        if (comments.length > limit) {
+          commentsToShow = comments.slice(0, limit);
+          showButton = true;
+        }
+
+        container.innerHTML = commentsToShow.map(comment => `
+          <div class="comment-item">
+            <img src="${comment.avatar || '/static/default-avatar.png'}"
+                 class="comment-avatar"
+                 alt="Avatar">
+            <div class="comment-content">
+              <div class="comment-username">${comment.username}</div>
+              <div class="comment-text">${comment.content}</div>
+              <div class="comment-time">${new Date(comment.created_at).toLocaleString()}</div>
+            </div>
+          </div>
+        `).join('');
+
+        if (showButton) {
+          container.insertAdjacentHTML('beforeend', `
+            <button class="btn btn-link btn-sm" onclick="showAllComments('${postPid}')">
+              Xem thêm bình luận
+            </button>
+          `);
+        }
+      } catch (error) {
+        console.error("Lỗi tải bình luận:", error);
+      }
+    }
+
+    // Hàm mở modal hiển thị toàn bộ bình luận cho bài viết
+    async function showAllComments(postPid) {
+      try {
+        const response = await fetch(`/api/auth/comments/${postPid}`);
+        const comments = await response.json();
+
+        let modalContent = comments.map(comment => `
+          <div class="comment-item">
+            <img src="${comment.avatar || '/static/default-avatar.png'}"
+                 class="comment-avatar"
+                 alt="Avatar">
+            <div class="comment-content">
+              <div class="comment-username">${comment.username}</div>
+              <div class="comment-text">${comment.content}</div>
+              <div class="comment-time">${new Date(comment.created_at).toLocaleString()}</div>
+            </div>
+          </div>
+        `).join('');
+
+        document.getElementById("commentsModalBody").innerHTML = modalContent;
+        const modalElement = document.getElementById("commentsModal");
+        const commentsModal = new bootstrap.Modal(modalElement);
+        commentsModal.show();
+      } catch (error) {
+        console.error("Lỗi tải bình luận:", error);
+      }
+    }
+
+    // Hàm gửi bình luận
+    async function postComment(postPid) {
+      const input = document.querySelector(`.comment-input[data-post-pid="${postPid}"]`);
+      const content = input.value.trim();
+      if (!content) {
+        alert("Vui lòng nhập nội dung bình luận!");
+        return;
+      }
+      try {
+        const response = await fetch('/api/auth/comments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ post_pid: postPid, content: content })
+        });
+        if (response.ok) {
+          input.value = '';
+          loadUserPosts();
+          loadComments(postPid);
+        } else {
+          alert("Lỗi khi gửi bình luận!");
+        }
+      } catch (error) {
+        console.error("Lỗi:", error);
+        alert("Lỗi kết nối server!");
+      }
+    }
+
+    // Hàm thả tim (like) bài viết
+    async function likePost(postPid) {
+      try {
+        const response = await fetch(`/api/auth/posts/${postPid}/like`, { method: 'PUT' });
+        if (response.ok) {
+          loadUserPosts();
+        } else {
+          alert("Lỗi khi thả tim!");
+        }
+      } catch (error) {
+        console.error("Lỗi:", error);
+        alert("Lỗi khi kết nối đến server!");
+      }
+    }
+
+    // Hàm chỉnh sửa bài viết (chỉ hiện thông báo, triển khai sau)
+    function editPost(postPid) {
+      alert("Chức năng chỉnh sửa cho bài viết " + postPid + " chưa được triển khai.");
+    }
+
+    // Hàm xoá bài viết
+    function deletePost(postPid) {
+      if (confirm("Bạn có chắc chắn muốn xoá bài viết này không?")) {
+        fetch(`/api/auth/posts/${postPid}`, { method: "DELETE" })
+          .then(response => {
+            if (response.ok) {
+              loadUserPosts();
+              alert("Bài viết đã được xoá.");
+            } else {
+              alert("Lỗi khi xoá bài viết.");
+            }
+          })
+          .catch(error => {
+            console.error("Lỗi:", error);
+            alert("Lỗi khi kết nối đến server!");
+          });
+      }
+    }
+
+    // Hàm chia sẻ bài viết (chưa triển khai chi tiết)
+    function sharePost(postPid) {
+      alert("Chức năng chia sẻ cho bài viết " + postPid + " chưa được triển khai.");
+    }
+
+    // Hàm kiểm tra quyền chỉnh sửa (nếu chủ sở hữu hoặc admin)
+    async function checkEditPermission() {
+      try {
+        const response = await fetch("/api/auth/me");
+        if (response.ok) {
+          const currentUser = await response.json();
+          if (currentUser.pid === profilePid || currentUser.role === 'admin') {
+            document.getElementById('edit-button-container').innerHTML = `
+              <button class="btn btn-primary" onclick="editProfile()">Chỉnh sửa hồ sơ</button>
+            `;
+          }
+        }
+      } catch (error) {
+        console.error("Lỗi:", error);
+      }
+    }
+
+    function editProfile() {
+      window.location.href = `/edit-profile?pid=${profilePid}`;
+    }
+
+    function logout() {
+      fetch("/api/auth/logout", { method: "POST" })
+        .then(() => { window.location.href = "/login"; });
+    }
+
+    function goToProfile() {
+      fetch("/api/auth/me")
+        .then(response => {
+          if (response.ok) return response.json();
+          throw new Error("Chưa đăng nhập");
+        })
+        .then(user => { window.location.href = `/profile?pid=${user.pid}`; })
+        .catch(error => {
+          console.error("Lỗi:", error);
+          window.location.href = "/login";
+        });
+    }
+
+    // Gọi các hàm khi trang được tải
+    loadUserPosts();
+    checkEditPermission();
+  </script>
+  <script src="/static/js/profile/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
